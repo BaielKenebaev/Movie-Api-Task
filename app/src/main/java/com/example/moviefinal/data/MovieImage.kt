@@ -1,3 +1,7 @@
 package com.example.moviefinal.data
 
-data class MovieImage()
+import com.google.gson.annotations.SerializedName
+
+data class MovieImage(
+    @SerializedName("file_path") val filePath: String,
+)

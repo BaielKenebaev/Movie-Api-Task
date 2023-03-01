@@ -1,6 +1,7 @@
 package com.example.moviefinal.api
 
 import com.example.moviefinal.data.Movie
+import com.example.moviefinal.data.MovieImages
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -13,6 +14,8 @@ interface MovieApi {
     @GET("movie/{movieId}")
     fun getMovieDetails(@Path("movieId") movieId: Long,@Query("api_key") apiKey: String): Call<Movie>
 
+    @GET("movie/{movieId}/images") ///movie/{movie_id}/images
+    fun getMovieImage(@Path("movieId") movieId: Long,@Query("api_key") apiKey: String): Call<MovieImages>
 
 
     companion object {
