@@ -18,11 +18,14 @@ import com.example.moviefinal.api.MovieApi
 import com.example.moviefinal.data.Movie
 import com.example.moviefinal.data.MovieImage
 import com.example.moviefinal.data.MovieImages
+import com.example.moviefinal.presenter.MoviePresenter
+import com.example.moviefinal.presenter.MoviePresenterImpl
+import com.example.moviefinal.view.MovieView
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), MovieView {
     private val movieIdEdit: EditText by lazy { findViewById(R.id.movie_id_edit) }
     private val loadButton: Button by lazy { findViewById(R.id.load_button) }
     private val movieTitle: TextView by lazy { findViewById(R.id.movie_title_value) }
@@ -35,6 +38,8 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var movieImageAdapter: MovieImageAdapter
 
+    private val presenter: MoviePresenter by lazy { MoviePresenterImpl() }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         
@@ -44,21 +49,24 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
+        presenter.setView(this)
         setRecyclerReview()
         loadButton.setOnClickListener {
             val movieId = movieIdEdit.text.toString().toLongOrNull()
 
             if(movieId != null){
-                MovieApi.INSTANCE.getMovieDetails(movieId, API_KEY).enqueue(callbackGetMovieDetails)
-                MovieApi.INSTANCE.getMovieImage(movieId, API_KEY).enqueue(callbackGetMovieImage)
+
+                presenter.onLoadClicked(movieId)
             }
 
         }
 
+    }
 
 
-
-
+    override fun onStop() {
+        super.onStop()
+        presenter.setView(null)
     }
 
     private fun setMovieImage(movieImages: MovieImages?){
@@ -77,7 +85,7 @@ class MainActivity : AppCompatActivity() {
 
 
 
-    fun setMovie(movie: Movie?){
+    override fun setMovie(movie: Movie?){
         if (movie == null){
             return
         }
@@ -95,24 +103,7 @@ class MainActivity : AppCompatActivity() {
 
 
 
-    private val callbackGetMovieDetails = object : Callback<Movie> {
-        override fun onResponse(call: Call<Movie>, response: Response<Movie>) {
-            if (response.isSuccessful){
-                setMovie(response.body())
 
-            }
-            else {
-
-                Toast.makeText(applicationContext, "Failed" , Toast.LENGTH_SHORT).show()
-
-            }
-        }
-
-        override fun onFailure(call: Call<Movie>, t: Throwable) {
-            Toast.makeText(applicationContext, "Failed" , Toast.LENGTH_SHORT).show()
-        }
-
-    }
 
 
 
@@ -131,9 +122,9 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-
-
     companion object {
         private const val API_KEY = "b4ed0cac530796fd0d402c1892784b22"
     }
+
+
 }
