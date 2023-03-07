@@ -57,6 +57,7 @@ class MainActivity : AppCompatActivity(), MovieView {
             if(movieId != null){
 
                 presenter.onLoadClicked(movieId)
+                MovieApi.INSTANCE.getMovieImage(movieId, API_KEY).enqueue(callbackGetMovieImage)
             }
 
         }
