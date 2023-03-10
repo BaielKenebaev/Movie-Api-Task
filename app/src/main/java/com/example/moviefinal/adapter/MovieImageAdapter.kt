@@ -1,17 +1,16 @@
-package com.example.moviefinal.adapter
+package com.example.moviefinal
 
-import android.content.Context
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.moviefinal.MainActivity
-import com.example.moviefinal.R
+import com.example.moviefinal.data.Movie
 import com.example.moviefinal.data.MovieImage
+import com.example.moviefinal.data.MovieImages
 
-class MovieImageAdapter(var mainActivity: Context): RecyclerView.Adapter<MovieImageAdapter.MovieImageViewHolder>() {
+class MovieImageAdapter(): RecyclerView.Adapter<MovieImageAdapter.MovieImageViewHolder>() {
     private var movieImage = mutableListOf<MovieImage>()
 
 
@@ -28,7 +27,7 @@ class MovieImageAdapter(var mainActivity: Context): RecyclerView.Adapter<MovieIm
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieImageViewHolder {
-        return MovieImageViewHolder(LayoutInflater.from(this.mainActivity).inflate(R.layout.item,parent,false))
+        return MovieImageViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item,parent,false))
     }
 
 
@@ -43,8 +42,6 @@ class MovieImageAdapter(var mainActivity: Context): RecyclerView.Adapter<MovieIm
 
     fun setData(listMovie: List<MovieImage>){
         movieImage = listMovie as MutableList<MovieImage>
-        movieImage.clear()
-        movieImage.addAll(listMovie)
         notifyDataSetChanged()
     }
 

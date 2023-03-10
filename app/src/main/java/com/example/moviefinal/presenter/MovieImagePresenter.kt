@@ -1,8 +1,3 @@
-package com.example.moviefinal.presenter
+package com.example.moviefinal.repository
 
-import com.example.moviefinal.view.MovieImageView
-
-interface MovieImagePresenter{
-    fun setImageVIew(view: MovieImageView?)
-    fun onImageLoadClicked(movieId: Long)
-}
+sealed interface MovieImagePresenter

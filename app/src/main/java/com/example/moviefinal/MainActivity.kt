@@ -3,26 +3,29 @@ package com.example.moviefinal
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.moviefinal.adapter.MovieImageAdapter
+import com.example.moviefinal.api.MovieApi
 import com.example.moviefinal.data.Movie
-
+import com.example.moviefinal.data.MovieImage
 import com.example.moviefinal.data.MovieImages
-import com.example.moviefinal.presenter.MovieImagePresenter
-import com.example.moviefinal.presenter.MovieImagePresenterImpl
-
 import com.example.moviefinal.presenter.MoviePresenter
 import com.example.moviefinal.presenter.MoviePresenterImpl
-import com.example.moviefinal.view.MovieImageView
 import com.example.moviefinal.view.MovieView
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
-class MainActivity : AppCompatActivity(), MovieView, MovieImageView {
+class MainActivity : AppCompatActivity(), MovieView {
     private val movieIdEdit: EditText by lazy { findViewById(R.id.movie_id_edit) }
     private val loadButton: Button by lazy { findViewById(R.id.load_button) }
     private val movieTitle: TextView by lazy { findViewById(R.id.movie_title_value) }
@@ -35,8 +38,7 @@ class MainActivity : AppCompatActivity(), MovieView, MovieImageView {
 
     private lateinit var movieImageAdapter: MovieImageAdapter
 
-    private val moviePresenter: MoviePresenter by lazy { MoviePresenterImpl() }
-    private  var  movieImagePresenter: MovieImagePresenter by lazy { MovieImagePresenterImpl() }
+    private val presenter: MoviePresenter by lazy { MoviePresenterImpl() }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,19 +49,15 @@ class MainActivity : AppCompatActivity(), MovieView, MovieImageView {
 
     override fun onStart() {
         super.onStart()
-        moviePresenter.setView(this)
-        movieImagePresenter.setImageVIew(this)
-        //setRecyclerReview()
-        movieRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        movieImageAdapter = MovieImageAdapter(this)
+        presenter.setView(this)
+        setRecyclerReview()
         loadButton.setOnClickListener {
             val movieId = movieIdEdit.text.toString().toLongOrNull()
 
             if(movieId != null){
 
-                moviePresenter.onLoadClicked(movieId)
-                movieImagePresenter.onImageLoadClicked(movieId)
-
+                presenter.onLoadClicked(movieId)
+                MovieApi.INSTANCE.getMovieImage(movieId, API_KEY).enqueue(callbackGetMovieImage)
             }
 
         }
@@ -69,26 +67,22 @@ class MainActivity : AppCompatActivity(), MovieView, MovieImageView {
 
     override fun onStop() {
         super.onStop()
-        moviePresenter.setView(null)
-        movieImagePresenter.setImageVIew(null)
+        presenter.setView(null)
     }
 
-    override fun setMovieImage(movieImages: MovieImages?){
+    private fun setMovieImage(movieImages: MovieImages?){
         if (movieImages == null) {
             return
         }
-        movieImageAdapter = MovieImageAdapter(this)
-        movieRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        movieRecyclerView.adapter = movieImageAdapter
         movieImageAdapter.setData(movieImages.posters)
     }
 
-//    fun setRecyclerReview(){
-//        //movieImageAdapter = MovieImageAdapter(this)
-//        //movieRecyclerView.adapter = movieImageAdapter
-//        movieRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-//
-//    }
+    private fun setRecyclerReview(){
+        movieImageAdapter = MovieImageAdapter()
+        movieRecyclerView.adapter = movieImageAdapter
+        movieRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+
+    }
 
 
 
@@ -111,6 +105,22 @@ class MainActivity : AppCompatActivity(), MovieView, MovieImageView {
 
 
 
+
+
+
+    private val callbackGetMovieImage = object : Callback<MovieImages>{
+        override fun onResponse(call: Call<MovieImages>, response: Response<MovieImages>) {
+            if (response.isSuccessful){
+                setMovieImage(response.body())
+
+            }
+        }
+
+        override fun onFailure(call: Call<MovieImages>, t: Throwable) {
+            TODO("Not yet implemented")
+        }
+
+    }
 
 
     companion object {
