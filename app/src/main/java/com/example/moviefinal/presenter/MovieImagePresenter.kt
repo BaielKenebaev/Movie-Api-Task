@@ -1,0 +1,3 @@
+package com.example.moviefinal.repository
+
+sealed interface MovieImagePresenter
