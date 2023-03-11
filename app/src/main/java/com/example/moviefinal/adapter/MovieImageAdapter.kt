@@ -41,7 +41,9 @@ class MovieImageAdapter(): RecyclerView.Adapter<MovieImageAdapter.MovieImageView
 
 
     fun setData(listMovie: List<MovieImage>){
-        movieImage = listMovie as MutableList<MovieImage>
+        //movieImage = listMovie as MutableList<MovieImage>
+        movieImage.clear()
+        movieImage.addAll(listMovie )
         notifyDataSetChanged()
     }
 

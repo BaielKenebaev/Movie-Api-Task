@@ -20,12 +20,15 @@ import com.example.moviefinal.data.MovieImage
 import com.example.moviefinal.data.MovieImages
 import com.example.moviefinal.presenter.MoviePresenter
 import com.example.moviefinal.presenter.MoviePresenterImpl
+import com.example.moviefinal.repository.MovieImagePresenter
+import com.example.moviefinal.repository.MovieImagePresenterImpl
+import com.example.moviefinal.view.MovieImageView
 import com.example.moviefinal.view.MovieView
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class MainActivity : AppCompatActivity(), MovieView {
+class MainActivity : AppCompatActivity(), MovieView, MovieImageView {
     private val movieIdEdit: EditText by lazy { findViewById(R.id.movie_id_edit) }
     private val loadButton: Button by lazy { findViewById(R.id.load_button) }
     private val movieTitle: TextView by lazy { findViewById(R.id.movie_title_value) }
@@ -38,7 +41,8 @@ class MainActivity : AppCompatActivity(), MovieView {
 
     private lateinit var movieImageAdapter: MovieImageAdapter
 
-    private val presenter: MoviePresenter by lazy { MoviePresenterImpl() }
+    private val moviePresenter: MoviePresenter by lazy { MoviePresenterImpl() }
+    private val movieImagePresenter: MovieImagePresenter by lazy { MovieImagePresenterImpl() }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,15 +53,17 @@ class MainActivity : AppCompatActivity(), MovieView {
 
     override fun onStart() {
         super.onStart()
-        presenter.setView(this)
+        moviePresenter.setView(this)
+        movieImagePresenter.setImageView(this)
         setRecyclerReview()
         loadButton.setOnClickListener {
             val movieId = movieIdEdit.text.toString().toLongOrNull()
 
             if(movieId != null){
 
-                presenter.onLoadClicked(movieId)
-                MovieApi.INSTANCE.getMovieImage(movieId, API_KEY).enqueue(callbackGetMovieImage)
+                moviePresenter.onLoadClicked(movieId)
+                movieImagePresenter.onImageLoadClicked(movieId)
+
             }
 
         }
@@ -67,10 +73,11 @@ class MainActivity : AppCompatActivity(), MovieView {
 
     override fun onStop() {
         super.onStop()
-        presenter.setView(null)
+        moviePresenter.setView(null)
+        movieImagePresenter.setImageView(null)
     }
 
-    private fun setMovieImage(movieImages: MovieImages?){
+    override fun setMovieImage(movieImages: MovieImages?){
         if (movieImages == null) {
             return
         }
@@ -108,19 +115,7 @@ class MainActivity : AppCompatActivity(), MovieView {
 
 
 
-    private val callbackGetMovieImage = object : Callback<MovieImages>{
-        override fun onResponse(call: Call<MovieImages>, response: Response<MovieImages>) {
-            if (response.isSuccessful){
-                setMovieImage(response.body())
 
-            }
-        }
-
-        override fun onFailure(call: Call<MovieImages>, t: Throwable) {
-            TODO("Not yet implemented")
-        }
-
-    }
 
 
     companion object {
