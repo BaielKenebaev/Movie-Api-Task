@@ -44,7 +44,7 @@ class MainActivity : AppCompatActivity(), MovieView, MovieImageView {
     private val moviePresenter: MoviePresenter by lazy { MoviePresenterImpl() }
     private val movieImagePresenter: MovieImagePresenter by lazy { MovieImagePresenterImpl() }
 
-
+    //Model - View - Presenter
     override fun onCreate(savedInstanceState: Bundle?) {
         
         super.onCreate(savedInstanceState)
