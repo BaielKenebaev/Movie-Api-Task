@@ -3,21 +3,18 @@ package com.example.moviefinal
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.viewModels
-
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.moviefinal.ViewModels.MovieImageViewModel
 import com.example.moviefinal.ViewModels.MovieViewModel
-
 import com.example.moviefinal.data.Movie
-
 import com.example.moviefinal.data.MovieImages
 
 
@@ -38,12 +35,12 @@ class MainActivity : AppCompatActivity() {
 
 
 
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        Log.d(TAG, "Activity -> onCreate() ")
     }
 
     override fun onStart() {
@@ -95,6 +92,8 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
+        Log.i(TAG, "Movie arrived -> $movie")
+
         movieTitle.text = movie.title
         movieRelease.text = movie.releaseDate
         movieBudget.text = movie.budget.toString()
@@ -106,11 +105,8 @@ class MainActivity : AppCompatActivity() {
             .into(moviePoster)
     }
 
-
-
-    companion object {
-        private const val API_KEY = "b4ed0cac530796fd0d402c1892784b22"
+    companion object{
+        const val TAG = "MainActivity"
     }
-
 
 }

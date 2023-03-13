@@ -1,5 +1,6 @@
 package com.example.moviefinal.repository
 
+import android.util.Log
 import com.example.moviefinal.api.MovieApi
 import com.example.moviefinal.data.MovieImages
 import retrofit2.Call
@@ -12,11 +13,12 @@ class MovieImageRepositoryImpl: MovieImageRepository {
             override fun onResponse(call: Call<MovieImages>, response: Response<MovieImages>) {
                 if(response.isSuccessful){
                     callback.onMovieImageLoaded(response.body())
+                    Log.i("MovieImageRecpository", "response is successful")
                 }
             }
 
             override fun onFailure(call: Call<MovieImages>, t: Throwable) {
-                TODO("Not yet implemented")
+
             }
 
         })

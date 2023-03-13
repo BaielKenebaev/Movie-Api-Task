@@ -1,5 +1,6 @@
 package com.example.moviefinal.ViewModels
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -21,5 +22,7 @@ class MovieImageViewModel: ViewModel() {
 
     fun loadMovieImage(movieId: Long){
         repository.getMovieImage(movieId, callback)
+        Log.i("MovieImageViewModel", "movieId is $movieId")
+        Log.d("MovieImageViewModel", "Function loadMovieImage() is called")
     }
 }
