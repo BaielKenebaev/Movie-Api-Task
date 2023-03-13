@@ -13,18 +13,17 @@ import androidx.activity.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.moviefinal.ViewModels.MovieImageViewModel
 import com.example.moviefinal.ViewModels.MovieViewModel
 
 import com.example.moviefinal.data.Movie
 
 import com.example.moviefinal.data.MovieImages
 
-import com.example.moviefinal.repository.MovieImagePresenter
-import com.example.moviefinal.repository.MovieImagePresenterImpl
-import com.example.moviefinal.view.MovieImageView
 
 
-class MainActivity : AppCompatActivity(), MovieImageView{
+
+class MainActivity : AppCompatActivity() {
     private val movieIdEdit: EditText by lazy { findViewById(R.id.movie_id_edit) }
     private val loadButton: Button by lazy { findViewById(R.id.load_button) }
     private val movieTitle: TextView by lazy { findViewById(R.id.movie_title_value) }
@@ -38,7 +37,7 @@ class MainActivity : AppCompatActivity(), MovieImageView{
     private lateinit var movieImageAdapter: MovieImageAdapter
 
 
-    private val movieImagePresenter: MovieImagePresenter by lazy { MovieImagePresenterImpl() }
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,7 +51,11 @@ class MainActivity : AppCompatActivity(), MovieImageView{
 
         val movieViewModel: MovieViewModel by viewModels()
         movieViewModel.currentMovie.observe(this) { movie -> setMovie(movie) }
-        movieImagePresenter.setImageView(this)
+
+        val movieImageViewModel: MovieImageViewModel by viewModels()
+        movieImageViewModel.currentMovieImage.observe(this) {movieImage -> setMovieImage(movieImage)}
+
+
         setRecyclerReview()
 
         loadButton.setOnClickListener {
@@ -61,7 +64,8 @@ class MainActivity : AppCompatActivity(), MovieImageView{
             if(movieId != null){
 
                 movieViewModel.loadMovie(movieId)
-                movieImagePresenter.onImageLoadClicked(movieId)
+                movieImageViewModel.loadMovieImage(movieId)
+
 
             }
 
@@ -70,13 +74,7 @@ class MainActivity : AppCompatActivity(), MovieImageView{
     }
 
 
-    override fun onStop() {
-        super.onStop()
-
-        movieImagePresenter.setImageView(null)
-    }
-
-    override fun setMovieImage(movieImages: MovieImages?){
+    fun setMovieImage(movieImages: MovieImages?){
         if (movieImages == null) {
             return
         }
@@ -107,13 +105,6 @@ class MainActivity : AppCompatActivity(), MovieImageView{
             .fitCenter()
             .into(moviePoster)
     }
-
-
-
-
-
-
-
 
 
 
