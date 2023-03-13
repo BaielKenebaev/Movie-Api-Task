@@ -3,32 +3,28 @@ package com.example.moviefinal
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
+import androidx.activity.viewModels
+
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.moviefinal.api.MovieApi
+import com.example.moviefinal.ViewModels.MovieViewModel
+
 import com.example.moviefinal.data.Movie
-import com.example.moviefinal.data.MovieImage
+
 import com.example.moviefinal.data.MovieImages
-import com.example.moviefinal.presenter.MoviePresenter
-import com.example.moviefinal.presenter.MoviePresenterImpl
+
 import com.example.moviefinal.repository.MovieImagePresenter
 import com.example.moviefinal.repository.MovieImagePresenterImpl
 import com.example.moviefinal.view.MovieImageView
-import com.example.moviefinal.view.MovieView
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
-class MainActivity : AppCompatActivity(), MovieView, MovieImageView {
+
+class MainActivity : AppCompatActivity(), MovieImageView{
     private val movieIdEdit: EditText by lazy { findViewById(R.id.movie_id_edit) }
     private val loadButton: Button by lazy { findViewById(R.id.load_button) }
     private val movieTitle: TextView by lazy { findViewById(R.id.movie_title_value) }
@@ -41,7 +37,7 @@ class MainActivity : AppCompatActivity(), MovieView, MovieImageView {
 
     private lateinit var movieImageAdapter: MovieImageAdapter
 
-    private val moviePresenter: MoviePresenter by lazy { MoviePresenterImpl() }
+
     private val movieImagePresenter: MovieImagePresenter by lazy { MovieImagePresenterImpl() }
 
 
@@ -53,15 +49,18 @@ class MainActivity : AppCompatActivity(), MovieView, MovieImageView {
 
     override fun onStart() {
         super.onStart()
-        moviePresenter.setView(this)
+
+        val movieViewModel: MovieViewModel by viewModels()
+        movieViewModel.currentMovie.observe(this) { movie -> setMovie(movie) }
         movieImagePresenter.setImageView(this)
         setRecyclerReview()
+
         loadButton.setOnClickListener {
             val movieId = movieIdEdit.text.toString().toLongOrNull()
 
             if(movieId != null){
 
-                moviePresenter.onLoadClicked(movieId)
+                movieViewModel.loadMovie(movieId)
                 movieImagePresenter.onImageLoadClicked(movieId)
 
             }
@@ -73,7 +72,7 @@ class MainActivity : AppCompatActivity(), MovieView, MovieImageView {
 
     override fun onStop() {
         super.onStop()
-        moviePresenter.setView(null)
+
         movieImagePresenter.setImageView(null)
     }
 
@@ -93,7 +92,7 @@ class MainActivity : AppCompatActivity(), MovieView, MovieImageView {
 
 
 
-    override fun setMovie(movie: Movie?){
+    fun setMovie(movie: Movie?){
         if (movie == null){
             return
         }

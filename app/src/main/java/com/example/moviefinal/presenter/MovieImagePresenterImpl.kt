@@ -1,10 +1,8 @@
 package com.example.moviefinal.repository
 
-import com.example.moviefinal.data.MovieImage
+import com.example.moviefinal.MainActivity
 import com.example.moviefinal.data.MovieImages
-import com.example.moviefinal.presenter.MoviePresenter
 import com.example.moviefinal.view.MovieImageView
-import com.example.moviefinal.view.MovieView
 
 class MovieImagePresenterImpl : MovieImagePresenter{
     private val repository: MovieImageRepository = MovieImageRepositoryImpl()
