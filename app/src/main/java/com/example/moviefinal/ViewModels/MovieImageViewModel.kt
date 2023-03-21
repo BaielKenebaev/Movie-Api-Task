@@ -1,28 +1,30 @@
 package com.example.moviefinal.ViewModels
 
-import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+
 import androidx.lifecycle.ViewModel
-import com.example.moviefinal.data.MovieImage
+import androidx.lifecycle.viewModelScope
 import com.example.moviefinal.data.MovieImages
 import com.example.moviefinal.repository.MovieImageRepository
 import com.example.moviefinal.repository.MovieImageRepositoryImpl
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
 class MovieImageViewModel: ViewModel() {
-    private val _currentMovieImage: MutableLiveData<MovieImages?> = MutableLiveData(null)
+    private val _currentMovieImage = MutableStateFlow<MovieImages?>(null)
     private val repository: MovieImageRepository = MovieImageRepositoryImpl()
-    private val callback: MovieImageRepository.Callback = object : MovieImageRepository.Callback{
-        override fun onMovieImageLoaded(movieImages: MovieImages?) {
+
+
+
+
+
+    val currentMovieImage: StateFlow<MovieImages?> = _currentMovieImage
+
+    fun loadMovieImage(movieId: Long) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val movieImages = repository.getMovieImage(movieId)
             _currentMovieImage.value = movieImages
         }
-    }
-
-    val currentMovieImage: MutableLiveData<MovieImages?> = _currentMovieImage
-
-    fun loadMovieImage(movieId: Long){
-        repository.getMovieImage(movieId, callback)
-        Log.i("MovieImageViewModel", "movieId is $movieId")
-        Log.d("MovieImageViewModel", "Function loadMovieImage() is called")
     }
 }

@@ -9,22 +9,15 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class MovieRepositoryImpl : MovieRepository {
-    override fun getMovieDetails(movieId: Long, callback: MovieRepository.Callback) {
-       MovieApi.INSTANCE.getMovieDetails(movieId, API_KEY).enqueue(object : Callback<Movie> {
-           override fun onResponse(call: Call<Movie>, response: Response<Movie>) {
-               if(response.isSuccessful){
-                   callback.onMovieLoaded(response.body())
-               }
-               else {
-                   callback.onMovieLoaded((null))
-               }
-           }
+    override suspend fun getMovieDetails(movieId: Long): Movie?{
+        val response = MovieApi.INSTANCE.getMovieDetails(movieId, API_KEY).execute()
 
-           override fun onFailure(call: Call<Movie>, t: Throwable) {
-               TODO("Not yet implemented")
-           }
-
-       })
+        return if(response.isSuccessful){
+            response.body()
+        }
+        else {
+            null
+        }
 
 
     }

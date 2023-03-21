@@ -1,27 +1,17 @@
 package com.example.moviefinal.repository
-
-import android.util.Log
 import com.example.moviefinal.api.MovieApi
 import com.example.moviefinal.data.MovieImages
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+
 
 class MovieImageRepositoryImpl: MovieImageRepository {
-    override fun getMovieImage(movieId: Long, callback: MovieImageRepository.Callback) {
-        MovieApi.INSTANCE.getMovieImage(movieId, API_KEY).enqueue(object : Callback<MovieImages> {
-            override fun onResponse(call: Call<MovieImages>, response: Response<MovieImages>) {
-                if(response.isSuccessful){
-                    callback.onMovieImageLoaded(response.body())
-                    Log.i("MovieImageRecpository", "response is successful")
-                }
-            }
-
-            override fun onFailure(call: Call<MovieImages>, t: Throwable) {
-
-            }
-
-        })
+    override suspend fun getMovieImage(movieId: Long): MovieImages? {
+        val response = MovieApi.INSTANCE.getMovieImage(movieId, API_KEY).execute()
+        return if(response.isSuccessful){
+            response.body()
+        }
+        else {
+            null
+        }
     }
 
     companion object {

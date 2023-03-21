@@ -1,27 +1,28 @@
 package com.example.moviefinal.ViewModels
 
-import android.database.Observable
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.moviefinal.data.Movie
 import com.example.moviefinal.repository.MovieRepository
 import com.example.moviefinal.repository.MovieRepositoryImpl
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
 class MovieViewModel: ViewModel() {
-    private val _currentMovie: MutableLiveData<Movie?> = MutableLiveData(null)
+    private val _currentMovie = MutableStateFlow<Movie?>(null)
     private val repository: MovieRepository = MovieRepositoryImpl()
-    private val callback: MovieRepository.Callback = object : MovieRepository.Callback{
-        override fun onMovieLoaded(movie: Movie?) {
-            _currentMovie.value = movie
-        }
 
-    }
 
-    val currentMovie: LiveData<Movie?> = _currentMovie
+    val currentMovie: StateFlow<Movie?> = _currentMovie
 
 
     fun loadMovie(movieId: Long){
-        repository.getMovieDetails(movieId, callback)
+        viewModelScope.launch(Dispatchers.IO) {
+            val movie = repository.getMovieDetails(movieId)
+            _currentMovie.value = movie
+        }
     }
 }
