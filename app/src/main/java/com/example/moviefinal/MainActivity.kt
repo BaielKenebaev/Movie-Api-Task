@@ -86,11 +86,6 @@ class MainActivity : AppCompatActivity() {
 
             }
 
-
-
-
-
-
             var preferencesCount = this.getSharedPreferences("counter", Context.MODE_PRIVATE)
             var edittor = preferencesCount.edit()
 
@@ -107,6 +102,7 @@ class MainActivity : AppCompatActivity() {
 
         if(preferences.getLong("movieId", Long.MAX_VALUE) != Long.MIN_VALUE){
             movieViewModel.loadMovie(preferences.getLong("movieId", Long.MIN_VALUE))
+            movieImageViewModel.loadMovieImage((preferences.getLong("movieId", Long.MIN_VALUE)))
         }
 
 
