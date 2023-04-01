@@ -1,13 +1,17 @@
 package com.example.moviefinal
 
+import android.content.Context
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.Settings.Global.putInt
 import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -38,6 +42,9 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var movieImageAdapter: MovieImageAdapter
 
+    private val sharedPrefFile = "kotlinsharedpreference"
+    var count = 0
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,7 +53,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-
+        val pref = this.getSharedPreferences(sharedPrefFile, Context.MODE_PRIVATE)
+        val preferences = getSharedPreferences("default", Context.MODE_PRIVATE)
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED){
@@ -56,12 +64,9 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
-
         }
 
         lifecycleScope.launch {
-
-
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 movieImageViewModel.currentMovieImage.collect{
                     setMovieImage(it)
@@ -76,15 +81,39 @@ class MainActivity : AppCompatActivity() {
             if(movieId != null){
 
                 movieViewModel.loadMovie(movieId)
+                preferences.edit().putLong("movieId", movieId).apply()
                 movieImageViewModel.loadMovieImage(movieId)
-
-
 
             }
 
+
+
+
+
+
+            var preferencesCount = this.getSharedPreferences("counter", Context.MODE_PRIVATE)
+            var edittor = preferencesCount.edit()
+
+
+            if(preferencesCount.getLong("counter", Long.MAX_VALUE) != Long.MIN_VALUE){
+                preferencesCount.getInt("counter", Long.MIN_VALUE.toInt())
+                edittor.apply()
+                count = count + 1
+                Toast.makeText(this, preferencesCount.getInt("counter", count).toString(), Toast.LENGTH_SHORT).show()
+            }
+
+
         }
 
+        if(preferences.getLong("movieId", Long.MAX_VALUE) != Long.MIN_VALUE){
+            movieViewModel.loadMovie(preferences.getLong("movieId", Long.MIN_VALUE))
+        }
+
+
+
     }
+
+
 
     override fun onStart() {
         super.onStart()
@@ -130,6 +159,9 @@ class MainActivity : AppCompatActivity() {
 
     companion object{
         const val TAG = "MainActivity_SET_MOVIE"
+        const val TAG_PREF = "PREF_SHARE_COUNT"
     }
+
+
 
 }
