@@ -1,26 +1,45 @@
 package com.example.moviefinal.repository
 
-import com.example.moviefinal.MainActivity
+import android.content.Context
+import android.util.Log
+import androidx.room.Room
 import com.example.moviefinal.api.MovieApi
 import com.example.moviefinal.data.Movie
-import com.example.moviefinal.repository.MovieRepositoryImpl.Companion.API_KEY
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import com.example.moviefinal.database.MovieDatabase
 
-class MovieRepositoryImpl : MovieRepository {
+
+class MovieRepositoryImpl(
+    private val context: Context
+) : MovieRepository {
+
+    private val database = Room
+        .databaseBuilder(context, MovieDatabase::class.java, "movie_database")
+        .build()
+
     override suspend fun getMovieDetails(movieId: Long): Movie?{
-        val response = MovieApi.INSTANCE.getMovieDetails(movieId, API_KEY).execute()
 
-        return if(response.isSuccessful){
-            response.body()
+        val savedMovieEntiy = database.movieDao().get(movieId)
+
+        return if (savedMovieEntiy != null) {
+            Log.d("DATABASE_BASE", "DATABASE")
+            savedMovieEntiy.toMovie()
+        } else {
+            val response = MovieApi.INSTANCE.getMovieDetails(movieId, API_KEY).execute()
+            if (response.isSuccessful){
+                val movie = response.body()
+                Log.d("DATABASE_BASE", "SERVER")
+                if(movie != null) {
+                    database.movieDao().insert(movie.toMovieEntity())
+                }
+                movie
+            }
+            else {
+                null
+
+            }
         }
-        else {
-            null
-        }
-
-
     }
+
 
 
 
