@@ -1,7 +1,8 @@
 package com.example.moviefinal.ViewModels
 
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.moviefinal.data.Movie
 import com.example.moviefinal.repository.MovieRepository
@@ -11,9 +12,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class MovieViewModel: ViewModel() {
+class MovieViewModel(application: Application): AndroidViewModel(application) {
     private val _currentMovie = MutableStateFlow<Movie?>(null)
-    private val repository: MovieRepository = MovieRepositoryImpl()
+    private val repository: MovieRepository = MovieRepositoryImpl(application)
 
 
     val currentMovie: StateFlow<Movie?> = _currentMovie
