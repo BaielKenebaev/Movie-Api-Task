@@ -20,7 +20,4 @@ data class MovieEntiy(
         return Movie(id, title, releaseDate, budget, poster)
     }
 
-
-
-
 }

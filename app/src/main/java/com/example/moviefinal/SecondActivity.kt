@@ -7,14 +7,16 @@ import androidx.activity.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.moviefinal.ViewModels.SavedViewModel
-import com.example.moviefinal.data.Movie
+import com.example.moviefinal.adapter.MovieListAdapter
 import com.example.moviefinal.database.MovieEntiy
 import com.example.moviefinal.databinding.ActivitySecond2Binding
 import kotlinx.coroutines.launch
 
 class SecondActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySecond2Binding
+    private lateinit var movieListAdapter: MovieListAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         binding = ActivitySecond2Binding.inflate(layoutInflater)
@@ -28,8 +30,10 @@ class SecondActivity : AppCompatActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 secondViewModel.currentRoom.collect {
-                    setData(it)
+                    setList(it)
                     Log.d(MainActivity.TAG, "$it")
+
+                    binding.listMovieRv
                 }
             }
 
@@ -40,9 +44,25 @@ class SecondActivity : AppCompatActivity() {
 
     }
 
-    fun setData(roomData: List<MovieEntiy>?) {
-        binding.roomText.text = roomData.toString()
+    override fun onStart() {
+        super.onStart()
+        setRecyclerView()
     }
+
+    private fun setRecyclerView() {
+        movieListAdapter = MovieListAdapter()
+        binding.listMovieRv.adapter = movieListAdapter
+        binding.listMovieRv.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+
+    }
+
+
+    fun setList(list: List<MovieEntiy>?) {
+        if (list != null) {
+            movieListAdapter.setData(list)
+        }
+    }
+
 
 
 }

@@ -19,15 +19,13 @@ class MovieRepositoryImpl(
 
     override suspend fun getMovieDetails(movieId: Long): Movie?{
 
-        val savedMovieEntiy = database.movieDao().get(movieId)
+        val savedMovieEntity = database.movieDao().get(movieId)
 
-        val savedMovieEntiyList = database.movieDao().getListMovie()
 
-        Log.d(TAG, "${savedMovieEntiyList}")
 
-        return if (savedMovieEntiy != null) {
+        return if (savedMovieEntity != null) {
             Log.d("DATABASE_BASE", "DATABASE")
-            savedMovieEntiy.toMovie()
+            savedMovieEntity.toMovie()
         } else {
             val response = MovieApi.INSTANCE.getMovieDetails(movieId, API_KEY).execute()
             if (response.isSuccessful){
@@ -46,13 +44,11 @@ class MovieRepositoryImpl(
     }
 
     override suspend fun getFromDataBase(): List<MovieEntiy> {
-        var map = mutableMapOf<Long, String>()
-        val savedMovieEntiy = database.movieDao().getListMovie().forEach{
-            map.put()
-        }
-        Log.d(TAG, "$savedMovieEntiy")
 
-        return savedMovieEntiy
+        val savedMovieEntity = database.movieDao().getListMovie()
+        Log.d(TAG, "$savedMovieEntity")
+
+        return savedMovieEntity
 
     }
 

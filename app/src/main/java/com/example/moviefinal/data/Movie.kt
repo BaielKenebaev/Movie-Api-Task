@@ -1,6 +1,8 @@
 package com.example.moviefinal.data
 
+
 import com.example.moviefinal.database.MovieEntiy
+
 import com.google.gson.annotations.SerializedName
 
 data class Movie(
