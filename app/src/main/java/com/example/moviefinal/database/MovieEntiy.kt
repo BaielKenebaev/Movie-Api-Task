@@ -19,4 +19,8 @@ data class MovieEntiy(
     fun toMovie(): Movie {
         return Movie(id, title, releaseDate, budget, poster)
     }
+
+
+
+
 }
